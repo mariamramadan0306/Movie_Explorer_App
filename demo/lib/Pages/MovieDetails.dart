@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MovieDetails extends StatelessWidget {
+class MovieDetails extends StatefulWidget {
   late String name;
   late String url;
   late String year;
   late String description;
   late String rating;
   late String genres;
+  Set<String> favoriteMovies;
 
   MovieDetails({
     super.key,
@@ -16,8 +17,14 @@ class MovieDetails extends StatelessWidget {
     required this.description,
     required this.rating,
     required this.genres,
+    required this.favoriteMovies,
   });
 
+  @override
+  State<MovieDetails> createState() => _MovieDetailsState();
+}
+
+class _MovieDetailsState extends State<MovieDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +42,7 @@ class MovieDetails extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.network(
-                url,
+                widget.url,
                 width: 450,
                 height: 320,
                 fit: BoxFit.cover,
@@ -51,14 +58,14 @@ class MovieDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    widget.name,
                     style: TextStyle(color: Colors.white, fontSize: 30),
                   ),
                   SizedBox(height: 4),
                   Row(
                     children: [
                       Text(
-                        year,
+                        widget.year,
                         style: TextStyle(color: Colors.grey[400], fontSize: 13),
                       ),
                       Text(
@@ -68,14 +75,14 @@ class MovieDetails extends StatelessWidget {
                       Icon(Icons.star_rate, color: Colors.yellow, size: 15),
                       SizedBox(width: 5),
                       Text(
-                        rating,
+                        widget.rating,
                         style: TextStyle(color: Colors.yellow, fontSize: 15),
                       ),
                     ],
                   ),
                   SizedBox(height: 5),
                   Text(
-                    genres,
+                    widget.genres,
                     style: TextStyle(color: Colors.grey[400], fontSize: 15),
                   ),
                   SizedBox(height: 15),
@@ -96,25 +103,50 @@ class MovieDetails extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(12),
                       child: Text(
-                        description,
+                        widget.description,
                         style: TextStyle(color: Colors.grey[400], fontSize: 15),
                       ),
                     ),
                   ),
                   SizedBox(height: 30),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.play_arrow),
-                      label: Text(
-                        "Watch",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(250, 50),
-                        backgroundColor: Colors.purple,
-                        iconColor: Colors.white,
-                      ),
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(horizontal: 50),
+                    child: Row(
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.play_arrow),
+                          label: Text(
+                            "Watch",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(250, 50),
+                            backgroundColor: Colors.purple,
+                            iconColor: Colors.white,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (widget.favoriteMovies.contains(widget.name)) {
+                                widget.favoriteMovies.remove(widget.name);
+                              } else {
+                                widget.favoriteMovies.add(widget.name);
+                              }
+                            });
+                          },
+                          icon: Icon(
+                            widget.favoriteMovies.contains(widget.name)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: widget.favoriteMovies.contains(widget.name)
+                                ? Colors.red
+                                : Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
