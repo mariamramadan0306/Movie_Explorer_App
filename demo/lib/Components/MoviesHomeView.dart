@@ -2,7 +2,7 @@ import 'package:demo/Pages/MovieDetails.dart';
 import 'package:demo/Pages/moviesData.dart';
 import 'package:flutter/material.dart';
 
-Widget homeView(Set<String> favoriteMovies) {
+Widget homeView() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -72,7 +72,6 @@ Widget homeView(Set<String> favoriteMovies) {
                             year: movie["year"]!,
                             rating: movie["rating"]!,
                             genres: movie["genres"]!,
-                            favoriteMovies: favoriteMovies,
                           ),
                         ),
                       );

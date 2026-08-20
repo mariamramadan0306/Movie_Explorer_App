@@ -1,6 +1,7 @@
 import 'package:demo/Components/MoviesFavouriteView.dart';
 import 'package:demo/Components/MoviesHomeView.dart';
 import 'package:demo/Components/MoviesSearchView.dart';
+import 'package:demo/Components/ProfileView.dart';
 import 'package:flutter/material.dart';
 
 class MoviesPage extends StatefulWidget {
@@ -69,28 +70,19 @@ class _MoviesPageState extends State<MoviesPage> {
   Widget getBody() {
     switch (selectedIndex) {
       case 0:
-        return homeView(favoriteMovies);
+        return homeView();
 
       case 1:
-        return SearchPage(favoriteMovies: favoriteMovies);
+        return SearchPage();
 
       case 2:
-        return favoriteView(favoriteMovies);
+        return FavouriteView();
 
       case 3:
-        return profileView();
+        return Profileview();
 
       default:
-        return homeView(favoriteMovies);
+        return homeView();
     }
-  }
-
-  Widget profileView() {
-    return Center(
-      child: Text(
-        "Profile",
-        style: TextStyle(color: Colors.white, fontSize: 30),
-      ),
-    );
   }
 }

@@ -1,4 +1,6 @@
+import 'package:demo/Providers/FavouriteMoviesProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MovieDetails extends StatefulWidget {
   late String name;
@@ -7,7 +9,6 @@ class MovieDetails extends StatefulWidget {
   late String description;
   late String rating;
   late String genres;
-  Set<String> favoriteMovies;
 
   MovieDetails({
     super.key,
@@ -17,7 +18,6 @@ class MovieDetails extends StatefulWidget {
     required this.description,
     required this.rating,
     required this.genres,
-    required this.favoriteMovies,
   });
 
   @override
@@ -126,25 +126,37 @@ class _MovieDetailsState extends State<MovieDetails> {
                             iconColor: Colors.white,
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              if (widget.favoriteMovies.contains(widget.name)) {
-                                widget.favoriteMovies.remove(widget.name);
-                              } else {
-                                widget.favoriteMovies.add(widget.name);
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            widget.favoriteMovies.contains(widget.name)
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: widget.favoriteMovies.contains(widget.name)
-                                ? Colors.red
-                                : Colors.white,
-                            size: 30,
-                          ),
+                        Consumer<FavouriteMoviesModel>(
+                          builder: (context, favoriteMoviesData, child) =>
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (favoriteMoviesData.favoriteMovies
+                                        .contains(widget.name)) {
+                                      favoriteMoviesData.favoriteMovies.remove(
+                                        widget.name,
+                                      );
+                                    } else {
+                                      favoriteMoviesData.favoriteMovies.add(
+                                        widget.name,
+                                      );
+                                    }
+                                  });
+                                },
+                                icon: Icon(
+                                  favoriteMoviesData.favoriteMovies.contains(
+                                        widget.name,
+                                      )
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color:
+                                      favoriteMoviesData.favoriteMovies
+                                          .contains(widget.name)
+                                      ? Colors.red
+                                      : Colors.white,
+                                  size: 30,
+                                ),
+                              ),
                         ),
                       ],
                     ),

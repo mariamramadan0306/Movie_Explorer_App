@@ -2,10 +2,25 @@ import 'package:demo/Pages/GenresPage.dart';
 import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/LoginPage.dart';
 import 'package:demo/Pages/MoviesPage.dart';
+import 'package:demo/Providers/FavouriteMoviesProvider.dart';
+import 'package:demo/Providers/UserDataProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<FavouriteMoviesModel>(
+          create: (context) => FavouriteMoviesModel(),
+        ),
+        ChangeNotifierProvider<UserDataModel>(
+          create: (context) => UserDataModel(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

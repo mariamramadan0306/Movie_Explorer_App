@@ -1,4 +1,5 @@
 import 'package:demo/Pages/HomePage.dart';
+import 'package:demo/Pages/SingInPage.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -26,9 +27,9 @@ class LoginPage extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
                 //Widget that triggered the navigation
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => SignInPage()),
                 );
               },
               icon: Icon(Icons.movie),
