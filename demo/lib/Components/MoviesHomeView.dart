@@ -1,8 +1,9 @@
 import 'package:demo/Pages/MovieDetails.dart';
 import 'package:demo/Pages/moviesData.dart';
+import 'package:demo/utils/get_MoviePoster.dart';
 import 'package:flutter/material.dart';
 
-Widget homeView() {
+Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -56,9 +57,9 @@ Widget homeView() {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
+                itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  final movie = movies[index];
+                  final movie = snapshot.data![index];
 
                   return GestureDetector(
                     onTap: () {
@@ -66,12 +67,13 @@ Widget homeView() {
                         context,
                         MaterialPageRoute(
                           builder: (context) => MovieDetails(
-                            name: movie["name"]!,
-                            url: movie["url"]!,
-                            description: movie["description"]!,
-                            year: movie["year"]!,
-                            rating: movie["rating"]!,
-                            genres: movie["genres"]!,
+                            name: movie["title"]!,
+                            url: movie["poster_path"]!,
+                            description: movie["overview"]!,
+                            year: movie["release_date"]!,
+                            rating: movie['vote_average'].toStringAsFixed(1),
+
+                            genres: movie["genre_ids"]!,
                           ),
                         ),
                       );
@@ -84,18 +86,17 @@ Widget homeView() {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              movie["url"]!,
-                              width: 110,
-                              height: 160,
-                              fit: BoxFit.cover,
+                            child: getMoviePoster(
+                              movie["poster_path"]!,
+                              110,
+                              160,
                             ),
                           ),
 
                           SizedBox(height: 6),
 
                           Text(
-                            movie["name"]!,
+                            movie["title"]!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -109,7 +110,7 @@ Widget homeView() {
                           Row(
                             children: [
                               Text(
-                                movie["year"]!,
+                                movie["release_date"]!,
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 12,
@@ -123,7 +124,7 @@ Widget homeView() {
                               SizedBox(width: 2),
 
                               Text(
-                                movie["rating"]!,
+                                movie['vote_average'].toStringAsFixed(1),
                                 style: TextStyle(
                                   color: Colors.amber,
                                   fontSize: 12,

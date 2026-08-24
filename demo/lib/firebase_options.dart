@@ -57,22 +57,24 @@ class DefaultFirebaseOptions {
     projectId: 'movie-app-b7651',
     storageBucket: 'movie-app-b7651.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBsEXkCCLYzv6zba7cJxLZgqGVUTef70qs',
     appId: '1:420215362953:ios:88249476e61ef2582e7d58',
     messagingSenderId: '420215362953',
     projectId: 'movie-app-b7651',
     storageBucket: 'movie-app-b7651.firebasestorage.app',
+    androidClientId: '420215362953-km3ioh66lfrr3n596ml0e5mn29na7jf6.apps.googleusercontent.com',
+    iosClientId: '420215362953-s51ua0eglmvkflgs2j9l6ju8rkuo22k1.apps.googleusercontent.com',
     iosBundleId: 'com.example.demo',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBsEXkCCLYzv6zba7cJxLZgqGVUTef70qs',
     appId: '1:420215362953:ios:88249476e61ef2582e7d58',
     messagingSenderId: '420215362953',
     projectId: 'movie-app-b7651',
     storageBucket: 'movie-app-b7651.firebasestorage.app',
+    androidClientId: '420215362953-km3ioh66lfrr3n596ml0e5mn29na7jf6.apps.googleusercontent.com',
+    iosClientId: '420215362953-s51ua0eglmvkflgs2j9l6ju8rkuo22k1.apps.googleusercontent.com',
     iosBundleId: 'com.example.demo',
   );
 

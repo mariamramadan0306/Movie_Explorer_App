@@ -1,11 +1,10 @@
-import 'dart:convert';
+import 'package:demo/Components/MoviesDrawer.dart';
 import 'package:demo/Components/MoviesFavouriteView.dart';
 import 'package:demo/Components/MoviesHomeView.dart';
 import 'package:demo/Components/MoviesSearchView.dart';
 import 'package:demo/Components/ProfileView.dart';
+import 'package:demo/utils/fetch_Movies.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:demo/config/api_config.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({super.key});
@@ -18,23 +17,10 @@ class _MoviesPageState extends State<MoviesPage> {
   int selectedIndex = 0;
   Set<String> favoriteMovies = {};
 
-  Future<List> fetchMovies() async {
-    final response = await http.get(
-      Uri.parse('https://api.themoviedb.org/3/movie/popular'),
-      headers: {
-        'Authorization': 'Bearer ${ApiConfig.tmdbToken}',
-        'accept': 'application/json',
-      },
-    );
-    List movies = jsonDecode(response.body);
-    return movies;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(132, 37, 36, 36),
-
+      backgroundColor: const Color.fromARGB(218, 0, 0, 0),
       appBar: AppBar(
         title: Text(
           "Movies Page",
@@ -43,7 +29,21 @@ class _MoviesPageState extends State<MoviesPage> {
         centerTitle: true,
         backgroundColor: Colors.purple,
       ),
-      body: getBody(),
+      body: FutureBuilder(
+        future: fetchMovies(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Text("Error");
+            }
+            return getBody(snapshot);
+          }
+          return Text("");
+        },
+      ),
       bottomNavigationBar: Card(
         margin: EdgeInsets.symmetric(vertical: 20, horizontal: 35),
         color: Colors.grey[900],
@@ -61,6 +61,7 @@ class _MoviesPageState extends State<MoviesPage> {
           ),
         ),
       ),
+      endDrawer: Moviesdrawer(),
     );
   }
 
@@ -83,22 +84,22 @@ class _MoviesPageState extends State<MoviesPage> {
     );
   }
 
-  Widget getBody() {
+  Widget getBody(AsyncSnapshot<List<dynamic>> snapshot) {
     switch (selectedIndex) {
       case 0:
-        return homeView();
+        return homeView(snapshot);
 
       case 1:
-        return SearchPage();
+        return SearchPage(snapshot);
 
       case 2:
-        return FavouriteView();
+        return FavouriteView(snapshot);
 
       case 3:
         return Profileview();
 
       default:
-        return homeView();
+        return homeView(snapshot);
     }
   }
 }

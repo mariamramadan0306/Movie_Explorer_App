@@ -1,11 +1,13 @@
 import 'package:demo/Pages/MovieDetails.dart';
-import 'package:demo/Pages/moviesData.dart';
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
+import 'package:demo/utils/get_MoviePoster.dart';
+import 'package:demo/utils/get_gernes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FavouriteView extends StatefulWidget {
-  FavouriteView({super.key});
+  AsyncSnapshot<List<dynamic>> snapshot;
+  FavouriteView(this.snapshot, {super.key});
   @override
   State<FavouriteView> createState() => _FavouriteViewState();
 }
@@ -47,9 +49,11 @@ class _FavouriteViewState extends State<FavouriteView> {
                 : ListView.builder(
                     itemCount: favoriteMoviesData.favoriteMovies.length,
                     itemBuilder: (context, index) {
-                      final favoriteMovieList = movies.where((movie) {
+                      final favoriteMovieList = widget.snapshot.data!.where((
+                        movie,
+                      ) {
                         return favoriteMoviesData.favoriteMovies.contains(
-                          movie["name"],
+                          movie["title"],
                         );
                       }).toList();
                       final movie = favoriteMovieList[index];
@@ -59,12 +63,14 @@ class _FavouriteViewState extends State<FavouriteView> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MovieDetails(
-                                name: movie["name"]!,
-                                url: movie["url"]!,
-                                description: movie["description"]!,
-                                year: movie["year"]!,
-                                rating: movie["rating"]!,
-                                genres: movie["genres"]!,
+                                name: movie["title"]!,
+                                url: movie["poster_path"]!,
+                                description: movie["overview"]!,
+                                year: movie["release_date"]!,
+                                rating: movie['vote_average'].toStringAsFixed(
+                                  1,
+                                ),
+                                genres: movie["genre_ids"]!,
                               ),
                             ),
                           );
@@ -73,25 +79,24 @@ class _FavouriteViewState extends State<FavouriteView> {
                           color: Colors.grey[900],
 
                           child: ListTile(
-                            leading: Image.network(
-                              movie["url"]!,
-                              width: 50,
-                              height: 70,
-                              fit: BoxFit.cover,
+                            leading: getMoviePoster(
+                              movie["poster_path"]!,
+                              50,
+                              70,
                             ),
                             title: Text(
-                              movie["name"]!,
+                              movie["title"]!,
                               style: const TextStyle(color: Colors.white),
                             ),
                             subtitle: Text(
-                              "${movie["year"]} _  ${movie["genres"]}",
+                              "${movie["release_date"]} _   ${getGenres(movie['genre_ids']).join(' • ')}",
                               style: const TextStyle(color: Colors.grey),
                             ),
                             trailing: IconButton(
                               onPressed: () {
                                 setState(() {
                                   favoriteMoviesData.favoriteMovies.remove(
-                                    movie["name"],
+                                    movie["title"],
                                   );
                                 });
                               },

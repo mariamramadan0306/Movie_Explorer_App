@@ -85,7 +85,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(132, 37, 36, 36),
+      backgroundColor: const Color.fromARGB(218, 0, 0, 0),
 
       body: Column(
         children: [

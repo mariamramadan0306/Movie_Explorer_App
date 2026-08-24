@@ -1,4 +1,6 @@
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
+import 'package:demo/utils/get_MoviePoster.dart';
+import 'package:demo/utils/get_gernes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +10,7 @@ class MovieDetails extends StatefulWidget {
   late String year;
   late String description;
   late String rating;
-  late String genres;
+  late List genres;
 
   MovieDetails({
     super.key,
@@ -28,9 +30,9 @@ class _MovieDetailsState extends State<MovieDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(132, 37, 36, 36),
+      backgroundColor: const Color.fromARGB(218, 0, 0, 0),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(132, 37, 36, 36),
+        backgroundColor: const Color.fromARGB(218, 0, 0, 0),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
@@ -41,12 +43,7 @@ class _MovieDetailsState extends State<MovieDetails> {
             SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                widget.url,
-                width: 450,
-                height: 320,
-                fit: BoxFit.cover,
-              ),
+              child: getMoviePoster(widget.url, 480, 300),
             ),
             SizedBox(height: 8),
             Padding(
@@ -82,7 +79,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    widget.genres,
+                    getGenres(widget.genres).join(' • '),
                     style: TextStyle(color: Colors.grey[400], fontSize: 15),
                   ),
                   SizedBox(height: 15),
@@ -110,7 +107,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                   ),
                   SizedBox(height: 30),
                   Padding(
-                    padding: EdgeInsetsGeometry.symmetric(horizontal: 50),
+                    padding: EdgeInsetsGeometry.symmetric(horizontal: 77),
                     child: Row(
                       children: [
                         ElevatedButton.icon(

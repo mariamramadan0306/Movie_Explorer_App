@@ -14,9 +14,9 @@ class GenresPage extends StatelessWidget {
       "Horror",
     ];
     return Scaffold(
-      backgroundColor: const Color.fromARGB(132, 37, 36, 36),
+      backgroundColor: const Color.fromARGB(218, 0, 0, 0),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(132, 37, 36, 36),
+        backgroundColor: const Color.fromARGB(218, 0, 0, 0),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
