@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:demo/Components/MoviesFavouriteView.dart';
 import 'package:demo/Components/MoviesHomeView.dart';
 import 'package:demo/Components/MoviesSearchView.dart';
 import 'package:demo/Components/ProfileView.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:demo/config/api_config.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({super.key});
@@ -14,6 +17,19 @@ class MoviesPage extends StatefulWidget {
 class _MoviesPageState extends State<MoviesPage> {
   int selectedIndex = 0;
   Set<String> favoriteMovies = {};
+
+  Future<List> fetchMovies() async {
+    final response = await http.get(
+      Uri.parse('https://api.themoviedb.org/3/movie/popular'),
+      headers: {
+        'Authorization': 'Bearer ${ApiConfig.tmdbToken}',
+        'accept': 'application/json',
+      },
+    );
+    List movies = jsonDecode(response.body);
+    return movies;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
