@@ -1,5 +1,4 @@
 import 'package:demo/Pages/MovieDetails.dart';
-import 'package:demo/Pages/moviesData.dart';
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
 import 'package:demo/utils/get_MoviePoster.dart';
 import 'package:demo/utils/get_gernes.dart';
@@ -20,13 +19,15 @@ class _SearchPageState extends State<SearchPage> {
     Map<String, dynamic> movie,
     FavouriteMoviesModel favoriteMoviesData,
   ) {
-    setState(() {
-      if (favoriteMoviesData.favoriteMovies.contains(movie["title"])) {
-        favoriteMoviesData.favoriteMovies.remove(movie["title"]);
-      } else {
-        favoriteMoviesData.favoriteMovies.add(movie["title"]!);
-      }
-    });
+    final isFavorite = favoriteMoviesData.favoriteMovies.any(
+      (favorite) => favorite['id'] == movie['id'],
+    );
+
+    if (isFavorite) {
+      favoriteMoviesData.removeFavourite(movie);
+    } else {
+      favoriteMoviesData.addFavourite(movie);
+    }
   }
 
   @override
@@ -77,8 +78,8 @@ class _SearchPageState extends State<SearchPage> {
                           description: movie["overview"]!,
                           year: movie["release_date"]!,
                           rating: movie['vote_average'].toStringAsFixed(1),
-
                           genres: movie["genre_ids"]!,
+                          movie: movie,
                         ),
                       ),
                     );
@@ -100,14 +101,14 @@ class _SearchPageState extends State<SearchPage> {
                           addToFavourite(movie, favoriteMoviesData);
                         },
                         icon: Icon(
-                          favoriteMoviesData.favoriteMovies.contains(
-                                movie["title"],
+                          favoriteMoviesData.favoriteMovies.any(
+                                (favorite) => favorite['id'] == movie['id'],
                               )
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color:
-                              favoriteMoviesData.favoriteMovies.contains(
-                                movie["title"],
+                              favoriteMoviesData.favoriteMovies.any(
+                                (favorite) => favorite['id'] == movie['id'],
                               )
                               ? Colors.red
                               : Colors.white,

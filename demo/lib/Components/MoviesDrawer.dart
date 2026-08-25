@@ -51,11 +51,11 @@ class _MoviesdrawerState extends State<Moviesdrawer> {
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Colors.purple),
               accountName: Text(
-                user.userData["name"],
+                user.userData["name"] ?? "User",
                 style: TextStyle(color: Colors.white),
               ),
               accountEmail: Text(
-                user.userData["email"],
+                user.userData["email"] ?? "",
                 style: TextStyle(
                   color: const Color.fromARGB(255, 192, 192, 192),
                 ),

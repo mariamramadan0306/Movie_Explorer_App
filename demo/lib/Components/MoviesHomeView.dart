@@ -72,8 +72,8 @@ Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
                             description: movie["overview"]!,
                             year: movie["release_date"]!,
                             rating: movie['vote_average'].toStringAsFixed(1),
-
                             genres: movie["genre_ids"]!,
+                            movie: movie,
                           ),
                         ),
                       );

@@ -52,8 +52,8 @@ class _FavouriteViewState extends State<FavouriteView> {
                       final favoriteMovieList = widget.snapshot.data!.where((
                         movie,
                       ) {
-                        return favoriteMoviesData.favoriteMovies.contains(
-                          movie["title"],
+                        return favoriteMoviesData.favoriteMovies.any(
+                          (favorite) => favorite['id'] == movie['id'],
                         );
                       }).toList();
                       final movie = favoriteMovieList[index];
@@ -71,6 +71,7 @@ class _FavouriteViewState extends State<FavouriteView> {
                                   1,
                                 ),
                                 genres: movie["genre_ids"]!,
+                                movie: movie,
                               ),
                             ),
                           );
@@ -95,9 +96,7 @@ class _FavouriteViewState extends State<FavouriteView> {
                             trailing: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  favoriteMoviesData.favoriteMovies.remove(
-                                    movie["title"],
-                                  );
+                                  favoriteMoviesData.removeFavourite(movie);
                                 });
                               },
                               icon: Icon(

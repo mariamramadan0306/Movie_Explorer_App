@@ -11,6 +11,7 @@ class MovieDetails extends StatefulWidget {
   late String description;
   late String rating;
   late List genres;
+  final Map<String, dynamic> movie;
 
   MovieDetails({
     super.key,
@@ -20,6 +21,7 @@ class MovieDetails extends StatefulWidget {
     required this.description,
     required this.rating,
     required this.genres,
+    required this.movie,
   });
 
   @override
@@ -124,36 +126,34 @@ class _MovieDetailsState extends State<MovieDetails> {
                           ),
                         ),
                         Consumer<FavouriteMoviesModel>(
-                          builder: (context, favoriteMoviesData, child) =>
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (favoriteMoviesData.favoriteMovies
-                                        .contains(widget.name)) {
-                                      favoriteMoviesData.favoriteMovies.remove(
-                                        widget.name,
-                                      );
-                                    } else {
-                                      favoriteMoviesData.favoriteMovies.add(
-                                        widget.name,
-                                      );
-                                    }
-                                  });
-                                },
-                                icon: Icon(
-                                  favoriteMoviesData.favoriteMovies.contains(
-                                        widget.name,
-                                      )
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color:
-                                      favoriteMoviesData.favoriteMovies
-                                          .contains(widget.name)
-                                      ? Colors.red
-                                      : Colors.white,
-                                  size: 30,
-                                ),
+                          builder: (context, favoriteMoviesData, child) {
+                            final isFavorite = favoriteMoviesData.favoriteMovies
+                                .any(
+                                  (favorite) =>
+                                      favorite['id'] == widget.movie['id'],
+                                );
+
+                            return IconButton(
+                              onPressed: () async {
+                                if (isFavorite) {
+                                  await favoriteMoviesData.removeFavourite(
+                                    widget.movie,
+                                  );
+                                } else {
+                                  await favoriteMoviesData.addFavourite(
+                                    widget.movie,
+                                  );
+                                }
+                              },
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.white,
+                                size: 30,
                               ),
+                            );
+                          },
                         ),
                       ],
                     ),
