@@ -25,8 +25,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> initializeGoogleSignIn() async {
     await googleSignIn.initialize(
-      clientId:
-          '420215362953-g4gkufh4f6fk9avqo5lkjsilm8qatkb1.apps.googleusercontent.com',
+      clientId: String.fromEnvironment('CLIENT_ID'),
     );
   }
 
