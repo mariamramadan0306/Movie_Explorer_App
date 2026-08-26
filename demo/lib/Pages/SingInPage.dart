@@ -1,6 +1,7 @@
 import 'package:demo/Components/loginForgotPasswordView.dart';
 import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/SignUpPage.dart';
+import 'package:demo/config/api_config.dart';
 import 'package:demo/utils/show_message.dart';
 import 'package:demo/utils/sign_in_up_inputDecoration.dart';
 import 'package:demo/utils/validations.dart';
@@ -24,9 +25,7 @@ class _SignInPageState extends State<SignInPage> {
   bool obscurePassword = true;
 
   Future<void> initializeGoogleSignIn() async {
-    await googleSignIn.initialize(
-      clientId: String.fromEnvironment('CLIENT_ID'),
-    );
+    await googleSignIn.initialize(clientId: ApiConfig.googleClientKey);
   }
 
   @override

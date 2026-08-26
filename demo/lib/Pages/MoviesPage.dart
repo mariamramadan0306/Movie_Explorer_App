@@ -3,6 +3,7 @@ import 'package:demo/Components/MoviesFavouriteView.dart';
 import 'package:demo/Components/MoviesHomeView.dart';
 import 'package:demo/Components/MoviesSearchView.dart';
 import 'package:demo/Components/ProfileView.dart';
+import 'package:demo/Pages/ChatbotPage.dart';
 import 'package:demo/utils/fetch_Movies.dart';
 import 'package:flutter/material.dart';
 
@@ -90,7 +91,17 @@ class _MoviesPageState extends State<MoviesPage> {
         return homeView(snapshot);
 
       case 1:
-        return SearchPage(snapshot);
+        return SearchPage(
+          snapshot,
+          onOpenChat: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChatbotPage(movies: snapshot.data ?? []),
+              ),
+            );
+          },
+        );
 
       case 2:
         return FavouriteView(snapshot);

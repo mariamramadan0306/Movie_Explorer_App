@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
-  AsyncSnapshot<List<dynamic>> snapshot;
-  SearchPage(this.snapshot, {super.key});
+  final AsyncSnapshot<List<dynamic>> snapshot;
+  final VoidCallback onOpenChat;
+  SearchPage(this.snapshot, {required this.onOpenChat, super.key});
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
@@ -40,23 +41,35 @@ class _SearchPageState extends State<SearchPage> {
       children: [
         Padding(
           padding: const EdgeInsets.all(16),
-          child: TextField(
-            style: const TextStyle(color: Colors.white),
-            onChanged: (value) {
-              setState(() {
-                searchText = value;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: "Search for a movie...",
-              prefixIcon: const Icon(Icons.search),
-              filled: true,
-              fillColor: Colors.grey[900],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Search for a movie...",
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.grey[900],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              IconButton.filled(
+                tooltip: 'Open movie chatbot',
+                onPressed: widget.onOpenChat,
+                icon: const Icon(Icons.smart_toy_outlined),
+              ),
+            ],
           ),
         ),
 
