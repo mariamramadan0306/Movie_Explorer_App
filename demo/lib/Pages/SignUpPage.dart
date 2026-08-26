@@ -1,8 +1,9 @@
-import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/SingInPage.dart';
-import 'package:demo/Providers/UserDataProvider.dart';
+import 'package:demo/utils/show_message.dart';
+import 'package:demo/utils/sign_in_up_inputDecoration.dart';
+import 'package:demo/utils/validations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -18,65 +19,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  bool obscurePassword = true;
+  bool confirmObscurePassword = true;
+
   Map<String, dynamic> userData = {};
-  bool _isloading = false;
 
-  InputDecoration _inputDecoration({
-    required String label,
-    required String hint,
-    required IconData icon,
-  }) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: Colors.white),
-      hintText: hint,
-      hintStyle: TextStyle(color: const Color.fromARGB(115, 255, 255, 255)),
-      prefixIcon: Icon(icon, color: Colors.white),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(width: 2),
-      ),
-      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      filled: true,
-      fillColor: const Color.fromARGB(255, 59, 59, 59),
-    );
-  }
-
-  String? _validateName(String? value) {
+  String? validateConfirmPassword(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return "Name field is required";
-    }
-    if (value.length < 3) {
-      return "name must be at least 3 characters";
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Email field is required";
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@[\w-]+\.[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value.trim())) {
-      return "Invalid Email Format";
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Password field is required";
-    }
-    if (value.trim().length < 6) {
-      return "Password Must be at least 6 chars";
-    }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Email field is required";
+      return "Confirm password field is required";
     }
     if (value != _passwordController.text) {
       return "Password do not match";
@@ -84,22 +35,63 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
-  Future<void> _submitForm(UserDataModel user) async {
+  Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-    setState(() {
-      _isloading = true;
-    });
     await Future.delayed(Duration(seconds: 2));
-    userData = {"name": _nameController.text, "email": _emailController.text};
-    user.userData.addAll(userData);
-    setState(() {
-      _isloading = false;
-      Navigator.pushReplacement(
+    try {
+      final UserCredential credential = await auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      final User? user = credential.user;
+      if (user != null) {
+        await user.updateDisplayName(name);
+      }
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        showMessage(
+          "Registration Successful! Please verify your email",
+          context,
+          mounted,
+        );
+        await Future.delayed(Duration(seconds: 1));
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SignInPage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'email-already-in-use':
+          message = "Account already exists";
+          break;
+        case 'invalid-email':
+          message = "the email address is invalid";
+          break;
+        case 'weak-password':
+          message = "the password is too weak";
+          break;
+        case 'operation-not-allowed':
+          message = "Email/Password Authentication is not enabled";
+          break;
+        default:
+          message = e.message ?? "Something went wrong";
+      }
+
+      showMessage(message, context, mounted);
+    } catch (e) {
+      showMessage(
+        'Something went worng, please try again later',
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        mounted,
       );
-    });
+    }
   }
 
   @override
@@ -205,54 +197,84 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                       children: [
                         TextFormField(
+                          style: const TextStyle(color: Colors.white),
                           controller: _nameController,
-                          decoration: _inputDecoration(
+                          decoration: inputDecoration(
                             label: "name",
                             hint: "please enter your name",
                             icon: Icons.abc,
                           ),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
-                          validator: _validateName,
+                          validator: validateName,
                         ),
                         SizedBox(height: 13),
                         TextFormField(
+                          style: const TextStyle(color: Colors.white),
                           controller: _emailController,
-                          decoration: _inputDecoration(
+                          decoration: inputDecoration(
                             label: "email",
                             hint: "please enter your email",
                             icon: Icons.email,
                           ),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
-                          validator: _validateEmail,
+                          validator: validateEmail,
                         ),
                         SizedBox(height: 13),
                         TextFormField(
+                          style: const TextStyle(color: Colors.white),
                           controller: _passwordController,
-                          decoration: _inputDecoration(
+                          decoration: inputDecoration(
                             label: "password",
                             hint: "please enter your password",
                             icon: Icons.password_outlined,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  obscurePassword = !obscurePassword;
+                                });
+                              },
+                            ),
                           ),
+                          obscureText: obscurePassword,
                           keyboardType: TextInputType.number,
-                          obscureText: true,
-
                           textInputAction: TextInputAction.next,
-                          validator: _validatePassword,
+                          validator: validatePassword,
                         ),
                         SizedBox(height: 13),
                         TextFormField(
+                          style: const TextStyle(color: Colors.white),
                           controller: _confirmPasswordController,
-                          decoration: _inputDecoration(
+                          decoration: inputDecoration(
                             label: "confirm password",
                             hint: "please confirm your password",
                             icon: Icons.key_off,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                confirmObscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  confirmObscurePassword =
+                                      !confirmObscurePassword;
+                                });
+                              },
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: confirmObscurePassword,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.next,
-                          validator: _validateConfirmPassword,
+                          validator: validateConfirmPassword,
                         ),
                         SizedBox(height: 13),
                         Container(
@@ -267,28 +289,18 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Consumer<UserDataModel>(
-                            builder: (context, user, child) => ElevatedButton(
-                              onPressed: () {
-                                _isloading ? null : _submitForm(user);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
+                          child: ElevatedButton(
+                            onPressed: _submitForm,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
                               ),
-                              child: _isloading
-                                  ? SizedBox(
-                                      height: 24,
-                                      width: 24,
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : Text(
-                                      "Register",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
                             ),
                           ),
                         ),

@@ -3,7 +3,6 @@ import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/LoginPage.dart';
 import 'package:demo/Pages/MoviesPage.dart';
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
-import 'package:demo/Providers/UserDataProvider.dart';
 import 'package:demo/utils/fetch_Movies.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,15 +13,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   fetchMovies();
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<FavouriteMoviesModel>(
-          create: (context) => FavouriteMoviesModel(),
-        ),
-        ChangeNotifierProvider<UserDataModel>(
-          create: (context) => UserDataModel(),
-        ),
-      ],
+    ChangeNotifierProvider<FavouriteMoviesModel>(
+      create: (context) => FavouriteMoviesModel(),
       child: const MyApp(),
     ),
   );

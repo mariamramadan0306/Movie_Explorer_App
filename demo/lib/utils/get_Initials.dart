@@ -1,8 +1,4 @@
-import 'package:demo/Providers/UserDataProvider.dart';
-
-String getInitials(UserDataModel user) {
-  String fullName = user.userData["name"] ?? "User";
-
+String getInitials(String fullName) {
   List<String> names = fullName.trim().split(RegExp(r'\s+'));
 
   String initials = names.length >= 2
