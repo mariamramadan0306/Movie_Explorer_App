@@ -1,45 +1,81 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
-class FavouriteMoviesModel extends ChangeNotifier {
-  List<Map<String, dynamic>> favoriteMovies = [];
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
-  FavouriteMoviesModel() {
-    loadFavorites();
+class FavouritesProvider extends ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final String userId;
+
+  FavouritesProvider(this.userId);
+
+  List<Map<String, dynamic>> _favourites = [];
+  bool _isLoading = true;
+  String? _error;
+
+  StreamSubscription<QuerySnapshot>? _favouritesSubscription;
+
+  List<Map<String, dynamic>> get favourites => _favourites;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  CollectionReference<Map<String, dynamic>> get favouritesCollection {
+    return _firestore.collection("users").doc(userId).collection("favourites");
   }
 
-  Future<void> addFavourite(Map<String, dynamic> movie) async {
-    favoriteMovies.add(movie);
-
-    await saveFavorites();
-
+  void startListening() {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
+
+    _favouritesSubscription?.cancel();
+
+    _favouritesSubscription = favouritesCollection.snapshots().listen(
+      (snapshot) {
+        _favourites = snapshot.docs.map((doc) {
+          return {'id': doc.id, ...doc.data()};
+        }).toList();
+
+        _isLoading = false;
+        _error = null;
+
+        notifyListeners();
+      },
+      onError: (error) {
+        _isLoading = false;
+        _error = error.toString();
+
+        notifyListeners();
+      },
+    );
   }
 
-  Future<void> removeFavourite(Map<String, dynamic> movie) async {
-    favoriteMovies.removeWhere((m) => m['id'] == movie['id']);
-
-    await saveFavorites();
-
-    notifyListeners();
+  Future<void> addFavourite(String movieId) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('favourites')
+        .doc(movieId)
+        .set({'movie_id': movieId, 'added_at': FieldValue.serverTimestamp()});
   }
 
-  Future<void> saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('favoriteMovies', jsonEncode(favoriteMovies));
+  Future<void> removeFavourite(String movieId) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('favourites')
+        .doc(movieId)
+        .delete();
   }
 
-  Future<void> loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
+  bool isFavourite(String movieId) {
+    return _favourites.any((favourite) => favourite['movie_id'] == movieId);
+  }
 
-    final data = prefs.getString('favoriteMovies');
-
-    if (data != null) {
-      favoriteMovies = List<Map<String, dynamic>>.from(jsonDecode(data));
-    }
-
-    notifyListeners();
+  @override
+  void dispose() {
+    _favouritesSubscription?.cancel();
+    super.dispose();
   }
 }

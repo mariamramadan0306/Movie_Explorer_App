@@ -1,9 +1,7 @@
 import 'package:demo/Pages/HomePage.dart';
-import 'package:demo/Pages/SingInPage.dart';
 import 'package:demo/utils/get_Initials.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Moviesdrawer extends StatefulWidget {
   const Moviesdrawer({super.key});
@@ -91,12 +89,8 @@ class _MoviesdrawerState extends State<Moviesdrawer> {
             child: ListTile(
               leading: Icon(Icons.logout, color: Colors.white),
               title: Text("Logout", style: TextStyle(color: Colors.white)),
-              onTap: () {
-                //Widget that triggered the navigation
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInPage()),
-                );
+              onTap: () async {
+                await auth.signOut();
               },
             ),
           ),

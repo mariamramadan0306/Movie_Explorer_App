@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FavouriteView extends StatefulWidget {
-  AsyncSnapshot<List<dynamic>> snapshot;
-  FavouriteView(this.snapshot, {super.key});
+  final AsyncSnapshot<List<dynamic>> snapshot;
+
+  const FavouriteView(this.snapshot, {super.key});
   @override
   State<FavouriteView> createState() => _FavouriteViewState();
 }
@@ -34,9 +35,11 @@ class _FavouriteViewState extends State<FavouriteView> {
         ),
         const SizedBox(height: 10),
 
-        Consumer<FavouriteMoviesModel>(
+        Consumer<FavouritesProvider>(
           builder: (context, favoriteMoviesData, child) => Expanded(
-            child: favoriteMoviesData.favoriteMovies.isEmpty
+            child: favoriteMoviesData.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : favoriteMoviesData.favourites.isEmpty
                 ? Center(
                     child: Text(
                       "No Favourites...",
@@ -47,13 +50,13 @@ class _FavouriteViewState extends State<FavouriteView> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: favoriteMoviesData.favoriteMovies.length,
+                    itemCount: favoriteMoviesData.favourites.length,
                     itemBuilder: (context, index) {
                       final favoriteMovieList = widget.snapshot.data!.where((
                         movie,
                       ) {
-                        return favoriteMoviesData.favoriteMovies.any(
-                          (favorite) => favorite['id'] == movie['id'],
+                        return favoriteMoviesData.isFavourite(
+                          movie['id'].toString(),
                         );
                       }).toList();
                       final movie = favoriteMovieList[index];
@@ -96,7 +99,9 @@ class _FavouriteViewState extends State<FavouriteView> {
                             trailing: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  favoriteMoviesData.removeFavourite(movie);
+                                  favoriteMoviesData.removeFavourite(
+                                    movie['id'].toString(),
+                                  );
                                 });
                               },
                               icon: Icon(

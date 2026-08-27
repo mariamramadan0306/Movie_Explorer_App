@@ -37,7 +37,7 @@ class _MovieDetailsState extends State<MovieDetails> {
         backgroundColor: const Color.fromARGB(218, 0, 0, 0),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,23 +125,22 @@ class _MovieDetailsState extends State<MovieDetails> {
                             iconColor: Colors.white,
                           ),
                         ),
-                        Consumer<FavouriteMoviesModel>(
+                        Consumer<FavouritesProvider>(
                           builder: (context, favoriteMoviesData, child) {
-                            final isFavorite = favoriteMoviesData.favoriteMovies
-                                .any(
-                                  (favorite) =>
-                                      favorite['id'] == widget.movie['id'],
-                                );
+                            final movieId = widget.movie['id'].toString();
+                            final isFavorite = favoriteMoviesData.isFavourite(
+                              movieId,
+                            );
 
                             return IconButton(
                               onPressed: () async {
                                 if (isFavorite) {
                                   await favoriteMoviesData.removeFavourite(
-                                    widget.movie,
+                                    movieId,
                                   );
                                 } else {
                                   await favoriteMoviesData.addFavourite(
-                                    widget.movie,
+                                    movieId,
                                   );
                                 }
                               },

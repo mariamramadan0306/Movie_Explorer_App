@@ -16,18 +16,17 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String searchText = "";
 
-  void addToFavourite(
+  Future<void> addToFavourite(
     Map<String, dynamic> movie,
-    FavouriteMoviesModel favoriteMoviesData,
-  ) {
-    final isFavorite = favoriteMoviesData.favoriteMovies.any(
-      (favorite) => favorite['id'] == movie['id'],
-    );
+    FavouritesProvider favoriteMoviesData,
+  ) async {
+    final movieId = movie['id'].toString();
+    final isFavorite = favoriteMoviesData.isFavourite(movieId);
 
     if (isFavorite) {
-      favoriteMoviesData.removeFavourite(movie);
+      await favoriteMoviesData.removeFavourite(movieId);
     } else {
-      favoriteMoviesData.addFavourite(movie);
+      await favoriteMoviesData.addFavourite(movieId);
     }
   }
 
@@ -79,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (context, index) {
               final movie = filteredMovies[index];
 
-              return Consumer<FavouriteMoviesModel>(
+              return Consumer<FavouritesProvider>(
                 builder: (context, favoriteMoviesData, child) => GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -114,14 +113,12 @@ class _SearchPageState extends State<SearchPage> {
                           addToFavourite(movie, favoriteMoviesData);
                         },
                         icon: Icon(
-                          favoriteMoviesData.favoriteMovies.any(
-                                (favorite) => favorite['id'] == movie['id'],
-                              )
+                          favoriteMoviesData.isFavourite(movie['id'].toString())
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color:
-                              favoriteMoviesData.favoriteMovies.any(
-                                (favorite) => favorite['id'] == movie['id'],
+                              favoriteMoviesData.isFavourite(
+                                movie['id'].toString(),
                               )
                               ? Colors.red
                               : Colors.white,

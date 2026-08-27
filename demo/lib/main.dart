@@ -7,33 +7,57 @@ import 'package:demo/utils/fetch_Movies.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await dotenv.load(fileName: '.env');
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   fetchMovies();
-  runApp(
-    ChangeNotifierProvider<FavouriteMoviesModel>(
-      create: (context) => FavouriteMoviesModel(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(const AuthenticatedApp());
+}
+
+class AuthenticatedApp extends StatelessWidget {
+  const AuthenticatedApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+          );
+        }
+
+        final user = snapshot.data;
+        if (user == null || !user.emailVerified) {
+          return const MyApp(home: LoginPage());
+        }
+
+        return ChangeNotifierProvider<FavouritesProvider>(
+          create: (context) => FavouritesProvider(user.uid)..startListening(),
+          child: const MyApp(home: HomePage()),
+        );
+      },
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget home;
+
+  const MyApp({super.key, required this.home});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Movie Explorer App',
-      initialRoute: '/login',
+      home: home,
       routes: {
         "/login": (context) => LoginPage(),
         "/home": (context) => HomePage(),

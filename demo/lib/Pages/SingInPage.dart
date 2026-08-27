@@ -1,5 +1,4 @@
 import 'package:demo/Components/loginForgotPasswordView.dart';
-import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/SignUpPage.dart';
 import 'package:demo/config/api_config.dart';
 import 'package:demo/utils/show_message.dart';
@@ -44,13 +43,6 @@ class _SignInPageState extends State<SignInPage> {
         showMessage("Google sign in failed", context, mounted);
         return;
       }
-
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
     } on FirebaseAuthException catch (e) {
       showMessage("error: ${e.message ?? e.code}", context, mounted);
     } catch (e) {
@@ -85,12 +77,6 @@ class _SignInPageState extends State<SignInPage> {
         );
         return;
       }
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
     } on FirebaseAuthException catch (e) {
       String message;
 

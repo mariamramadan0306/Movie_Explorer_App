@@ -1,6 +1,6 @@
 import 'package:demo/Pages/GenresPage.dart';
-import 'package:demo/Pages/LoginPage.dart';
 import 'package:demo/Pages/MoviesPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -50,13 +50,8 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20),
 
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                  //clear navigation stack
-                  (route) => false,
-                );
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
               },
               icon: Icon(Icons.logout),
               label: Text("logout"),
