@@ -1,5 +1,6 @@
 import 'package:demo/utils/get_Initials.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demo/utils/load_admin_status.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,18 +13,7 @@ class Moviesdrawer extends StatefulWidget {
 
 class _MoviesdrawerState extends State<Moviesdrawer> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  late final Future<bool> _adminStatus = _loadAdminStatus();
-
-  Future<bool> _loadAdminStatus() async {
-    final user = auth.currentUser;
-    if (user == null) return false;
-
-    final document = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-    return document.data()?['isAdmin'] == true;
-  }
+  late final Future<bool> _adminStatus = loadAdminStatus(auth);
 
   @override
   Widget build(BuildContext context) {

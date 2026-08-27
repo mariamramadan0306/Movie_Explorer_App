@@ -291,7 +291,7 @@ class _SignInPageState extends State<SignInPage> {
                             });
                           },
                           title: const Text(
-                            'Remember email and password',
+                            'Remember me',
                             style: TextStyle(color: Colors.white),
                           ),
                           controlAffinity: ListTileControlAffinity.leading,

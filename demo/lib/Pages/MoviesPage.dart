@@ -5,7 +5,9 @@ import 'package:demo/Components/MoviesSearchView.dart';
 import 'package:demo/Components/ProfileView.dart';
 import 'package:demo/Pages/ChatbotPage.dart';
 import 'package:demo/utils/fetch_Movies.dart';
+import 'package:demo/Providers/MoviesProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({super.key});
@@ -88,7 +90,11 @@ class _MoviesPageState extends State<MoviesPage> {
   Widget getBody(AsyncSnapshot<List<dynamic>> snapshot) {
     switch (selectedIndex) {
       case 0:
-        return homeView(snapshot);
+        return Consumer<MoviesProvider>(
+          builder: (context, moviesProvider, child) {
+            return homeView(snapshot, newMovies: moviesProvider.movies);
+          },
+        );
 
       case 1:
         return SearchPage(

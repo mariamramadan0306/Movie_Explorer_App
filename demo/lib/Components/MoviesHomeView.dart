@@ -3,7 +3,12 @@ import 'package:demo/Pages/moviesData.dart';
 import 'package:demo/utils/get_MoviePoster.dart';
 import 'package:flutter/material.dart';
 
-Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
+Widget homeView(
+  AsyncSnapshot<List<dynamic>> snapshot, {
+  List<dynamic>? newMovies,
+}) {
+  final newReleaseMovies = newMovies ?? snapshot.data ?? [];
+
   return SingleChildScrollView(
     padding: EdgeInsets.symmetric(horizontal: 5),
     child: Column(
@@ -54,14 +59,14 @@ Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
             SizedBox(height: 10),
 
             SizedBox(
-              height: 250,
+              height: 240,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: snapshot.data!.length,
+                  itemCount: newReleaseMovies.length,
                   itemBuilder: (context, index) {
-                    final movie = snapshot.data![index];
+                    final movie = newReleaseMovies[index];
 
                     return GestureDetector(
                       onTap: () {
@@ -86,13 +91,36 @@ Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: getMoviePoster(
-                                movie["poster_path"]!,
-                                110,
-                                160,
-                              ),
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: getMoviePoster(
+                                    movie["poster_path"]!,
+                                    110,
+                                    160,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  left: 6,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 3,
+                                    ),
+                                    color: Colors.redAccent,
+                                    child: const Text(
+                                      'NEW RELEASE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
 
                             SizedBox(height: 6),
@@ -145,7 +173,6 @@ Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
                 ),
               ),
             ),
-            SizedBox(height: 10),
 
             Text(
               "Popular",
@@ -159,7 +186,7 @@ Widget homeView(AsyncSnapshot<List<dynamic>> snapshot) {
             SizedBox(height: 10),
 
             SizedBox(
-              height: 250,
+              height: 240,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ListView.builder(

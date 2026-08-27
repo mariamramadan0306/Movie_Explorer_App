@@ -1,5 +1,6 @@
 import 'package:demo/Components/changePasswordView.dart';
 import 'package:demo/utils/get_Initials.dart';
+import 'package:demo/utils/load_admin_status.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class Profileview extends StatefulWidget {
 
 class _ProfileviewState extends State<Profileview> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-
+  late final Future<bool> _adminStatus = loadAdminStatus(auth);
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -31,9 +32,23 @@ class _ProfileviewState extends State<Profileview> {
               ),
             ),
           ),
-          Text(
-            auth.currentUser!.displayName!,
-            style: TextStyle(color: Colors.white, fontSize: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                auth.currentUser!.displayName!,
+                style: TextStyle(color: Colors.white, fontSize: 30),
+              ),
+              SizedBox(width: 3),
+              FutureBuilder<bool>(
+                future: _adminStatus,
+                builder: (context, snapshot) {
+                  if (snapshot.data != true) return const SizedBox.shrink();
+
+                  return Icon(Icons.admin_panel_settings, color: Colors.white);
+                },
+              ),
+            ],
           ),
           Text(
             auth.currentUser!.email!,

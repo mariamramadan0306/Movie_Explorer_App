@@ -16,6 +16,19 @@ class MoviesProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
+  Future<String> addMovie(Map<String, dynamic> movie) async {
+    final document = await _firestore.collection('movies').add(movie);
+    return document.id;
+  }
+
+  Future<void> removeMovie(String movieId) async {
+    await _firestore.collection('movies').doc(movieId).delete();
+  }
+
+  Future<void> updateMovie(String movieId, Map<String, dynamic> data) async {
+    await _firestore.collection('movies').doc(movieId).update(data);
+  }
+
   void startListening() {
     _isLoading = true;
     _error = null;
