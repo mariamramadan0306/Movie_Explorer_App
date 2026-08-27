@@ -52,21 +52,14 @@ class FavouritesProvider extends ChangeNotifier {
   }
 
   Future<void> addFavourite(String movieId) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('favourites')
-        .doc(movieId)
-        .set({'movie_id': movieId, 'added_at': FieldValue.serverTimestamp()});
+    await favouritesCollection.doc(movieId).set({
+      'movie_id': movieId,
+      'added_at': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> removeFavourite(String movieId) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('favourites')
-        .doc(movieId)
-        .delete();
+    await favouritesCollection.doc(movieId).delete();
   }
 
   bool isFavourite(String movieId) {

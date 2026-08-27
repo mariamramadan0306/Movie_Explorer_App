@@ -1,4 +1,5 @@
 import 'package:demo/utils/get_Initials.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,18 @@ class Moviesdrawer extends StatefulWidget {
 
 class _MoviesdrawerState extends State<Moviesdrawer> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+  late final Future<bool> _adminStatus = _loadAdminStatus();
+
+  Future<bool> _loadAdminStatus() async {
+    final user = auth.currentUser;
+    if (user == null) return false;
+
+    final document = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    return document.data()?['isAdmin'] == true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +86,24 @@ class _MoviesdrawerState extends State<Moviesdrawer> {
               Navigator.pushNamed(context, '/home');
             },
           ),
-          ListTile(
-            leading: Icon(Icons.admin_panel_settings, color: Colors.white),
-            title: Text("Admin panel", style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pushNamed(context, '/home');
+          FutureBuilder<bool>(
+            future: _adminStatus,
+            builder: (context, snapshot) {
+              if (snapshot.data != true) return const SizedBox.shrink();
+
+              return ListTile(
+                leading: const Icon(
+                  Icons.admin_panel_settings,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  "Admin panel",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/admin');
+                },
+              );
             },
           ),
           ListTile(

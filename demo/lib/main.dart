@@ -2,6 +2,7 @@ import 'package:demo/Pages/GenresPage.dart';
 import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/LoginPage.dart';
 import 'package:demo/Pages/MoviesPage.dart';
+import 'package:demo/Pages/AdminPanelPage.dart';
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
 import 'package:demo/Providers/MoviesProvider.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
         "/home": (context) => HomePage(),
         "/movies": (context) => MoviesPage(),
         "/genres": (context) => GenresPage(),
+        "/admin": (context) => AdminPanelPage(),
       },
     );
   }

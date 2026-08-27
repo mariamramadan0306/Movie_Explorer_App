@@ -7,6 +7,7 @@ import 'package:demo/utils/validations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -22,6 +23,7 @@ class _SignInPageState extends State<SignInPage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn.instance;
   bool obscurePassword = true;
+  bool rememberCredentials = true;
 
   Future<void> initializeGoogleSignIn() async {
     await googleSignIn.initialize(clientId: ApiConfig.googleClientKey);
@@ -31,6 +33,31 @@ class _SignInPageState extends State<SignInPage> {
   void initState() {
     super.initState();
     initializeGoogleSignIn();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final preferences = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    setState(() {
+      _emailController.text = preferences.getString('saved_email') ?? '';
+      _passwordController.text = preferences.getString('saved_password') ?? '';
+      rememberCredentials = preferences.getBool('remember_credentials') ?? true;
+    });
+  }
+
+  Future<void> _saveCredentials(String email, String password) async {
+    final preferences = await SharedPreferences.getInstance();
+    if (rememberCredentials) {
+      await preferences.setString('saved_email', email);
+      await preferences.setString('saved_password', password);
+      await preferences.setBool('remember_credentials', true);
+    } else {
+      await preferences.remove('saved_email');
+      await preferences.remove('saved_password');
+      await preferences.setBool('remember_credentials', false);
+    }
   }
 
   Future signInWithGoogle() async {
@@ -77,6 +104,7 @@ class _SignInPageState extends State<SignInPage> {
         );
         return;
       }
+      await _saveCredentials(email, password);
     } on FirebaseAuthException catch (e) {
       String message;
 
@@ -255,6 +283,21 @@ class _SignInPageState extends State<SignInPage> {
                           validator: validatePassword,
                         ),
                         SizedBox(height: 16),
+                        CheckboxListTile(
+                          value: rememberCredentials,
+                          onChanged: (value) {
+                            setState(() {
+                              rememberCredentials = value ?? false;
+                            });
+                          },
+                          title: const Text(
+                            'Remember email and password',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Colors.purple,
+                        ),
                         Container(
                           width: double.infinity,
                           height: 50,
