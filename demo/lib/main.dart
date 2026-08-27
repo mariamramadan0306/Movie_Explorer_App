@@ -3,7 +3,7 @@ import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/Pages/LoginPage.dart';
 import 'package:demo/Pages/MoviesPage.dart';
 import 'package:demo/Providers/FavouriteMoviesProvider.dart';
-import 'package:demo/utils/fetch_Movies.dart';
+import 'package:demo/Providers/MoviesProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,9 +13,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load(fileName: '.env');
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  fetchMovies();
+
   runApp(const AuthenticatedApp());
 }
 
@@ -34,12 +36,21 @@ class AuthenticatedApp extends StatelessWidget {
         }
 
         final user = snapshot.data;
+
         if (user == null || !user.emailVerified) {
           return const MyApp(home: LoginPage());
         }
 
-        return ChangeNotifierProvider<FavouritesProvider>(
-          create: (context) => FavouritesProvider(user.uid)..startListening(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider<MoviesProvider>(
+              create: (_) => MoviesProvider()..startListening(),
+            ),
+
+            ChangeNotifierProvider<FavouritesProvider>(
+              create: (_) => FavouritesProvider(user.uid)..startListening(),
+            ),
+          ],
           child: const MyApp(home: HomePage()),
         );
       },
@@ -64,7 +75,6 @@ class MyApp extends StatelessWidget {
         "/movies": (context) => MoviesPage(),
         "/genres": (context) => GenresPage(),
       },
-      // home: LoginPage(),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:demo/Pages/HomePage.dart';
 import 'package:demo/utils/get_Initials.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -71,11 +70,14 @@ class _MoviesdrawerState extends State<Moviesdrawer> {
             leading: Icon(Icons.home, color: Colors.white),
             title: Text("Home Page", style: TextStyle(color: Colors.white)),
             onTap: () {
-              //Widget that triggered the navigation
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
+              Navigator.pushNamed(context, '/home');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.admin_panel_settings, color: Colors.white),
+            title: Text("Admin panel", style: TextStyle(color: Colors.white)),
+            onTap: () {
+              Navigator.pushNamed(context, '/home');
             },
           ),
           ListTile(

@@ -1,5 +1,3 @@
-import 'package:demo/Pages/GenresPage.dart';
-import 'package:demo/Pages/MoviesPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -25,10 +23,7 @@ class HomePage extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MoviesPage()),
-                );
+                Navigator.pushNamed(context, '/movies');
               },
               icon: Icon(Icons.movie_filter_sharp),
               label: Text("View Movies", style: TextStyle(fontSize: 17)),
@@ -38,10 +33,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GenresPage()),
-                );
+                Navigator.pushNamed(context, '/genres');
               },
               icon: Icon(Icons.type_specimen),
               label: Text("View Genres", style: TextStyle(fontSize: 17)),
