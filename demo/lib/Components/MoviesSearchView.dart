@@ -8,7 +8,13 @@ import 'package:provider/provider.dart';
 class SearchPage extends StatefulWidget {
   final AsyncSnapshot<List<dynamic>> snapshot;
   final VoidCallback onOpenChat;
-  SearchPage(this.snapshot, {required this.onOpenChat, super.key});
+  List<dynamic>? newMovies;
+  SearchPage(
+    this.snapshot, {
+    required this.onOpenChat,
+    super.key,
+    this.newMovies,
+  });
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
@@ -35,7 +41,7 @@ class _SearchPageState extends State<SearchPage> {
     final filteredMovies = widget.snapshot.data!.where((movie) {
       return movie["title"]!.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
-
+    filteredMovies.insertAll(0, widget.newMovies ?? []);
     return Column(
       children: [
         Padding(

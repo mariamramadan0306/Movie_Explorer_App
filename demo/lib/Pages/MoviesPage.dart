@@ -97,20 +97,29 @@ class _MoviesPageState extends State<MoviesPage> {
         );
 
       case 1:
-        return SearchPage(
-          snapshot,
-          onOpenChat: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ChatbotPage(movies: snapshot.data ?? []),
-              ),
+        return Consumer<MoviesProvider>(
+          builder: (context, moviesProvider, child) {
+            return SearchPage(
+              snapshot,
+              onOpenChat: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatbotPage(movies: snapshot.data ?? []),
+                  ),
+                );
+              },
+              newMovies: moviesProvider.movies,
             );
           },
         );
 
       case 2:
-        return FavouriteView(snapshot);
+        return Consumer<MoviesProvider>(
+          builder: (context, moviesProvider, child) {
+            return FavouriteView(snapshot, newMovies: moviesProvider.movies);
+          },
+        );
 
       case 3:
         return Profileview();
