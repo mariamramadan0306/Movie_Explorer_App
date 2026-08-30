@@ -1,5 +1,4 @@
 import 'package:demo/utils/get_Initials.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/utils/load_admin_status.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
