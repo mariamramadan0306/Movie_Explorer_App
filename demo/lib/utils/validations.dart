@@ -12,7 +12,7 @@ String? validateEmail(String? value) {
   if (value == null || value.trim().isEmpty) {
     return "Email field is required";
   }
-  final emailRegex = RegExp(r'^[\w-\.]+@[\w-]+\.[\w-]{2,4}$');
+  final emailRegex = RegExp(r'^[^@\s]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$');
   if (!emailRegex.hasMatch(value.trim())) {
     return "Invalid Email Format";
   }
