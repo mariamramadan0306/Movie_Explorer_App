@@ -8,12 +8,14 @@ import 'package:provider/provider.dart';
 class SearchPage extends StatefulWidget {
   final AsyncSnapshot<List<dynamic>> snapshot;
   final VoidCallback onOpenChat;
+  final int? selectedGenreId;
   List<dynamic>? newMovies;
   SearchPage(
     this.snapshot, {
     required this.onOpenChat,
     super.key,
     this.newMovies,
+    this.selectedGenreId,
   });
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -38,9 +40,22 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredMovies = widget.snapshot.data!.where((movie) {
-      return movie["title"]!.toLowerCase().contains(searchText.toLowerCase());
+    final baseMovies = widget.snapshot.data ?? [];
+    final filteredMovies = baseMovies.where((movie) {
+      final matchesTitle = movie["title"]!.toString().toLowerCase().contains(
+        searchText.toLowerCase(),
+      );
+
+      final matchesGenre =
+          widget.selectedGenreId == null ||
+          ((movie['genre_ids'] ?? []) as List)
+              .map((id) => id is int ? id : int.tryParse(id.toString()))
+              .whereType<int>()
+              .contains(widget.selectedGenreId);
+
+      return matchesTitle && matchesGenre;
     }).toList();
+
     filteredMovies.insertAll(0, widget.newMovies ?? []);
     return Column(
       children: [

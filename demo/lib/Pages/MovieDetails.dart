@@ -108,8 +108,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                     ),
                   ),
                   SizedBox(height: 30),
-                  Padding(
-                    padding: EdgeInsetsGeometry.symmetric(horizontal: 77),
+                  Container(
+                    alignment: AlignmentGeometry.center,
                     child: Row(
                       children: [
                         ElevatedButton.icon(

@@ -35,17 +35,27 @@ class _ProfileviewState extends State<Profileview> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                auth.currentUser!.displayName!,
-                style: TextStyle(color: Colors.white, fontSize: 30),
+              Flexible(
+                child: Text(
+                  auth.currentUser!.displayName!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white, fontSize: 30),
+                ),
               ),
-              SizedBox(width: 3),
+              const SizedBox(width: 3),
               FutureBuilder<bool>(
                 future: _adminStatus,
                 builder: (context, snapshot) {
-                  if (snapshot.data != true) return const SizedBox.shrink();
+                  if (snapshot.data != true) {
+                    return const SizedBox.shrink();
+                  }
 
-                  return Icon(Icons.admin_panel_settings, color: Colors.white);
+                  return const Icon(
+                    Icons.admin_panel_settings,
+                    color: Colors.white,
+                  );
                 },
               ),
             ],

@@ -342,73 +342,36 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         SizedBox(height: 20),
 
-                        Padding(
-                          padding: EdgeInsetsGeometry.symmetric(horizontal: 90),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 280,
-                                height: 50,
-                                child: OutlinedButton.icon(
-                                  onPressed: signInWithGoogle,
-                                  icon: Icon(
-                                    Icons.g_mobiledata_sharp,
-                                    color: Colors.purple,
-                                    size: 28,
-                                  ),
-                                  label: const Text(
-                                    "Sign in with Google",
-                                    style: TextStyle(
-                                      color: Colors.purple,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    side: const BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
+                        Center(
+                          child: SizedBox(
+                            width: 280,
+                            height: 50,
+                            child: OutlinedButton.icon(
+                              onPressed: signInWithGoogle,
+                              icon: Icon(
+                                Icons.g_mobiledata_sharp,
+                                color: Colors.purple,
+                                size: 28,
+                              ),
+                              label: const Text(
+                                "Sign in with Google",
+                                style: TextStyle(
+                                  color: Colors.purple,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              // const SizedBox(width: 12),
-
-                              // SizedBox(
-                              //   width: 150,
-                              //   height: 50,
-                              //   child: OutlinedButton.icon(
-                              //     onPressed: () {},
-                              //     icon: const Icon(
-                              //       Icons.apple,
-                              //       size: 25,
-                              //       color: Colors.black,
-                              //     ),
-                              //     label: const Text(
-                              //       "Apple",
-                              //       style: TextStyle(
-                              //         color: Colors.black,
-                              //         fontSize: 15,
-                              //         fontWeight: FontWeight.w500,
-                              //       ),
-                              //     ),
-                              //     style: OutlinedButton.styleFrom(
-                              //       backgroundColor: Colors.white,
-                              //       side: const BorderSide(
-                              //         color: Colors.grey,
-                              //         width: 1,
-                              //       ),
-                              //       shape: RoundedRectangleBorder(
-                              //         borderRadius: BorderRadius.circular(12),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

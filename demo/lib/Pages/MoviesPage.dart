@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MoviesPage extends StatefulWidget {
-  const MoviesPage({super.key});
+  final int? selectedGenreId;
+  final String? selectedGenreName;
+
+  const MoviesPage({super.key, this.selectedGenreId, this.selectedGenreName});
 
   @override
   State<MoviesPage> createState() => _MoviesPageState();
@@ -21,13 +24,37 @@ class _MoviesPageState extends State<MoviesPage> {
   Set<String> favoriteMovies = {};
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.selectedGenreId != null) {
+      selectedIndex = 1;
+    }
+  }
+
+  List<dynamic> _filterMoviesByGenre(List<dynamic> movies) {
+    if (widget.selectedGenreId == null) return movies;
+
+    return movies.where((movie) {
+      final genreIds =
+          ((movie['genre_ids'] ?? []) as List?)
+              ?.map((id) => id is int ? id : int.tryParse(id.toString()))
+              .whereType<int>()
+              .toList() ??
+          [];
+      return genreIds.contains(widget.selectedGenreId);
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pageTitle = widget.selectedGenreName ?? 'Movies Page';
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(218, 0, 0, 0),
       appBar: AppBar(
         title: Text(
-          "Movies Page",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          pageTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.purple,
@@ -36,15 +63,22 @@ class _MoviesPageState extends State<MoviesPage> {
         future: fetchMovies(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              return Text("Error");
+              return const Text("Error");
             }
-            return getBody(snapshot);
+
+            final filteredMovies = _filterMoviesByGenre(snapshot.data ?? []);
+            final filteredSnapshot = AsyncSnapshot.withData(
+              ConnectionState.done,
+              filteredMovies,
+            );
+
+            return getBody(filteredSnapshot);
           }
-          return Text("");
+          return const Text("");
         },
       ),
       bottomNavigationBar: Card(
@@ -110,6 +144,7 @@ class _MoviesPageState extends State<MoviesPage> {
                 );
               },
               newMovies: moviesProvider.movies,
+              selectedGenreId: widget.selectedGenreId,
             );
           },
         );
