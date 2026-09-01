@@ -40,7 +40,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final baseMovies = widget.snapshot.data ?? [];
+    final baseMovies = [
+      ...(widget.newMovies ?? []),
+      ...(widget.snapshot.data ?? []),
+    ];
+
     final filteredMovies = baseMovies.where((movie) {
       final matchesTitle = movie["title"]!.toString().toLowerCase().contains(
         searchText.toLowerCase(),
@@ -56,7 +60,6 @@ class _SearchPageState extends State<SearchPage> {
       return matchesTitle && matchesGenre;
     }).toList();
 
-    filteredMovies.insertAll(0, widget.newMovies ?? []);
     return Column(
       children: [
         Padding(
