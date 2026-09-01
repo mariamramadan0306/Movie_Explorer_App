@@ -123,4 +123,4 @@ This project is for educational and personal project use. Add an appropriate lic
 
 ## Author
 
-Movie Explorer App
+Mariam Mohamed Ramadan
